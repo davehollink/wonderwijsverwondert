@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERWONDERLAB - AI CORE INTERFACE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-azure-dark: #112031;
+            --deep-azure-medium: #152D35;
+            --rich-teal: #345B63;
+            --pale-jade: #D4ECDD;
+            --pale-teal: #F8FFFE;
+            --font-tech: 'Rajdhani', sans-serif;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: var(--deep-azure-dark);
+            font-family: var(--font-tech);
+            color: var(--pale-jade);
+            overflow-x: hidden;
+        }
+
+        /* Tech Grid Achtergrond */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(52, 91, 99, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(52, 91, 99, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+        }
+
+        /* Subtiel Radar/Glow Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 150vw; height: 150vw;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(21, 45, 53, 0.8) 0%, rgba(17, 32, 49, 1) 70%);
+            z-index: -1;
+            animation: pulse-glow 8s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        /* Nieuwe layout: Volledige breedte en uitgelijnd naar rechts */
+        .hoofd-container {
+            width: 100vw;
+            min-height: 100vh;
+            padding: 40px 5%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo Styling - Vast aan de linkerkant */
+        .logo-container {
+            position: fixed;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 35%;
+            max-width: 500px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(212, 236, 221, 0.4));
+            animation: hologram-flicker 4s infinite;
+        }
+
+        @keyframes hologram-flicker {
+            0%, 100% { opacity: 1; filter: drop-shadow(0 0 20px rgba(212, 236, 221, 0.4)); }
+            98% { opacity: 0.9; filter: drop-shadow(0 0 10px rgba(212, 236, 221, 0.2)); }
+            99% { opacity: 1; filter: drop-shadow(0 0 30px rgba(212, 236, 221, 0.8)); }
+        }
+
+        /* Cyberpunk/Tech Paneel - Neemt de rechterkant in */
+        .tech-paneel {
+            width: 55%;
+            max-width: 900px;
+            background: rgba(21, 45, 53, 0.6);
+            padding: 50px 60px;
+            border-radius: 8px;
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--rich-teal);
+            box-shadow: 0 0 30px rgba(21, 45, 53, 0.8), inset 0 0 20px rgba(52, 91, 99, 0.3);
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        /* Decoratieve hoeken voor de tech-look */
+        .tech-paneel::before, .tech-paneel::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--pale-jade);
+            transition: all 0.3s;
+        }
+        .tech-paneel::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .tech-paneel::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+        .step {
+            display: none;
+            opacity: 0;
+            transform: scale(0.98);
+            transition: all 0.5s ease-out;
+        }
+
+        .step.active {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+            animation: bootUp 0.6s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes bootUp {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        h2 {
+            color: var(--pale-teal);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(248, 255, 254, 0.5);
+            border-bottom: 1px solid var(--rich-teal);
+            padding-bottom: 15px;
+        }
+
+        p {
+            color: var(--pale-jade);
+            line-height: 1.6;
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 35px;
+            font-weight: 400;
+        }
+
+        .input-groep {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Tech Input Velden */
+        input[type="text"] {
+            width: 70%;
+            padding: 15px 20px;
+            background-color: rgba(17, 32, 49, 0.8);
+            border: 1px solid var(--rich-teal);
+            border-left: 4px solid var(--pale-jade);
+            color: var(--pale-teal);
+            font-size: 1.4em;
+            font-family: var(--font-tech);
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--pale-jade);
+            background-color: rgba(21, 45, 53, 0.9);
+            box-shadow: 0 0 20px rgba(212, 236, 221, 0.2), inset 0 0 15px rgba(52, 91, 99, 0.5);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(107, 181, 196, 0.4);
+            letter-spacing: 2px;
+        }
+
+        /* Cyberpunk Knoppen */
+        .actie-knop {
+            background: transparent;
+            color: var(--pale-jade);
+            border: 2px solid var(--pale-jade);
+            padding: 16px 50px;
+            margin-top: 35px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-family: var(--font-tech);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .actie-knop:hover {
+            background: var(--pale-jade);
+            color: var(--deep-azure-dark);
+            box-shadow: 0 0 25px rgba(212, 236, 221, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .foutmelding {
+            color: #ff5252;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: none;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255, 82, 82, 0.4);
+            animation: glitch 0.3s;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-5px, 2px) }
+            40% { transform: translate(-5px, -2px) }
+            60% { transform: translate(5px, 2px) }
+            80% { transform: translate(5px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        /* Succes Scherm Styling */
+        #stap-succes h2 {
+            border: none;
+            font-size: 3em;
+            color: var(--pale-teal);
+            text-shadow: 0 0 20px var(--pale-jade), 0 0 40px var(--rich-teal);
+            margin-bottom: 20px;
+            animation: pulse-glow 2s infinite alternate;
+        }
+        
+        /* Status indicator bovenaan */
+        .status-bar {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 0.9em;
+            color: var(--rich-teal);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--pale-jade);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--pale-jade);
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Styling voor de Tinkercad link */
+        .tech-link {
+            display: inline-block;
+            margin: 15px 0;
+            padding: 10px 20px;
+            background: rgba(52, 91, 99, 0.3);
+            border: 1px dashed var(--pale-jade);
+            color: var(--pale-teal);
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .tech-link:hover {
+            background: rgba(52, 91, 99, 0.6);
+            box-shadow: 0 0 15px rgba(212, 236, 221, 0.4);
+        }
+
+        /* Styling voor Audio Visualizer */
+        .audio-visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            gap: 6px;
+            margin-bottom: 25px;
+        }
+
+        .audio-visualizer .bar {
+            width: 8px;
+            height: 10px;
+            background-color: var(--rich-teal);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .audio-visualizer.playing .bar {
+            background-color: var(--pale-jade);
+            box-shadow: 0 0 10px var(--pale-jade);
+            animation: equalize 1.2s infinite ease-in-out;
+        }
+
+        .audio-visualizer .bar:nth-child(1) { animation-delay: -0.4s; }
+        .audio-visualizer .bar:nth-child(2) { animation-delay: -0.2s; }
+        .audio-visualizer .bar:nth-child(3) { animation-delay: 0s; }
+        .audio-visualizer .bar:nth-child(4) { animation-delay: -0.6s; }
+        .audio-visualizer .bar:nth-child(5) { animation-delay: -0.1s; }
+        .audio-visualizer .bar:nth-child(6) { animation-delay: -0.3s; }
+        .audio-visualizer .bar:nth-child(7) { animation-delay: -0.5s; }
+
+        @keyframes equalize {
+            0%, 100% { height: 10px; }
+            50% { height: 50px; background-color: var(--pale-teal); box-shadow: 0 0 15px var(--pale-teal); }
+        }
+        
+        /* Styling voor in-browser audio speler */
+        audio {
+            width: 80%;
+            outline: none;
+            border-radius: 30px;
+            box-shadow: 0 0 15px rgba(52, 91, 99, 0.5);
+        }
+        
+        audio::-webkit-media-controls-panel {
+            background-color: var(--pale-jade);
+        }
+
+        /* Media query voor kleinere schermen */
+        @media (max-width: 900px) {
+            .hoofd-container {
+                flex-direction: column;
+                justify-content: center;
+                padding-top: 100px;
+            }
+            .logo-container {
+                position: relative;
+                left: auto;
+                top: auto;
+                transform: none;
+                width: 80%;
+                margin-bottom: 40px;
+            }
+            .tech-paneel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hoofd-container">
+    <div class="logo-container">
+        <img src="Verwonderlab.png" alt="Verwonderlab Logo">
+    </div>
+
+    <div class="tech-paneel">
+        <div class="status-bar">
+            Systeem Beveiligd <div class="status-dot"></div>
+        </div>
+        
+        <div id="stap-intro" class="step active">
+            <h2>Inkomende Transmissie</h2>
+            <p>Er is een versleuteld audiofragment onderschept. Beluister de briefing voordat jullie toegang vragen tot het hoofdsysteem.</p>
+            
+            <div id="audio-vis" class="audio-visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+
+            <div style="margin-bottom: 20px; width: 100%; display: flex; justify-content: center;">
+                <audio id="intro-audio" controls>
+                    <source src="jouw_podcast_bestand.mp3" type="audio/mpeg">
+                    Jouw browser ondersteunt dit audio-element niet.
+                </audio>
+            </div>
+
+            <div class="input-groep">
+                <button class="actie-knop" onclick="gaNaarStap(0)">Ga Verder</button>
+            </div>
+        </div>
+
+        <div id="stap-0" class="step">
+            <h2>Systeem Initialisatie</h2>
+            <p>Welkom in de mainframe van het Verwonderlab. De 'Toekomstvisie 2030' is beveiligd door drievoudige encryptie. Om toegang te verkrijgen, vereist het systeem data-input via AI, robotica en ruimtelijk inzicht. Protocol starten?</p>
+            <div class="input-groep">
+                <button class="actie-knop" onclick="gaNaarStap(1)">Start Missie</button>
+            </div>
+        </div>
+
+        <div id="stap-1" class="step">
+            <h2>Fase 1: Systeem Verificatie</h2>
+            <p>De AI-bewaker vereist identificatie via een 5-delig veiligheidsprotocol. Ga het gesprek aan in de terminal hieronder en beantwoord de vragen.</p>
+            
+            <div id="chat-venster" style="background: rgba(17, 32, 49, 0.9); height: 260px; overflow-y: auto; padding: 15px; border-radius: 8px; border: 1px solid var(--rich-teal); margin-bottom: 20px; text-align: left; font-family: monospace; font-size: 1.1em; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); scroll-behavior: smooth;">
+                <div style="color: var(--rich-teal);">[Systeem_AI]: Systeemvergrendeling actief. We starten het verificatie-protocol. <br><br>Vraag 1/5: Wat is een ander woord voor verstandig of slim?</div>
+            </div>
+
+            <div class="input-groep" style="flex-direction: row; gap: 10px; width: 100%; justify-content: center;">
+                <input type="text" id="chat-input" placeholder="TYP ANTWOORD..." autocomplete="off" onkeypress="if(event.key === 'Enter') stuurChatBericht()" style="width: 70%; margin-top: 0; text-transform: none; text-align: left; font-size: 1.1em;">
+                <button id="chat-btn" class="actie-knop" onclick="stuurChatBericht()" style="margin-top: 0; padding: 15px 25px;">Zend</button>
+            </div>
+            
+            <button id="btn-naar-stap-2" class="actie-knop" onclick="gaNaarStap(2)" style="display: none; width: 100%; margin-top: 20px;">INITIEER FASE 2</button>
+        </div>
+
+        <div id="stap-2" class="step">
+            <h2>Fase 2: Navigatie Logica</h2>
+            <p>Activeer de Ozobot op de fysieke plattegrond. Vul de ontbrekende kleurcodes in om de route naar de 'Innovatie-hub' te voltooien. Laat de succesvolle route zien aan de Systeembeheerders. Bij een correcte uitvoering ontvangen jullie een unieke autorisatiecode.</p>
+            <div class="input-groep">
+                <input type="text" id="input-2" placeholder="VOER AUTORISATIECODE IN" autocomplete="off">
+                <div id="fout-2" class="foutmelding">Error: Autorisatiecode onjuist. Route niet geverifieerd.</div>
+                <button class="actie-knop" onclick="controleerStap2()">Verifieer</button>
+            </div>
+        </div>
+
+        <div id="stap-3" class="step">
+            <h2>Fase 3: Ruimtelijk Inzicht (3D)</h2>
+            <p>Bestudeer het fysieke blokje op tafel. Onderop zien jullie een letter. Om dit op te lossen, moeten jullie de digitale blauwdruk van dit object analyseren in de 3D-omgeving.<br>
+            
+            <a href="https://www.tinkercad.com/joinclass/M5B6R8MNY" target="_blank" class="tech-link">OPEN 3D-BLAUWDRUK</a><br>
+            
+            Zoek het verborgen getal in het digitale model. Dit getal maakt samen met de letter onder op het blokje de juiste combinatie (bijvoorbeeld A1, B2 etc.).</p>
+            <div class="input-groep">
+                <input type="text" id="input-3" placeholder="VOER CODE IN (BIJV. A1)" autocomplete="off">
+                <div id="fout-3" class="foutmelding">Systeemfout: Code onjuist of combinatie niet herkend.</div>
+                <button class="actie-knop" onclick="controleerStap3()">Ontgrendel</button>
+            </div>
+        </div>
+
+        <div id="stap-succes" class="step">
+            <h2>Kluis Gekraakt</h2>
+            <p>Alle beveiligingsprotocollen succesvol gepasseerd! Neem jullie blokje mee naar de presentatiewand en plaats het op het nummer dat jullie zojuist hebben ontcijferd. Samen met de andere directeuren vormen jullie letterlijk de fundering van ons lab.<br><br>
+            Veel plezier vandaag!</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // JS Logica voor de Audio Visualizer animatie
+    document.addEventListener("DOMContentLoaded", function() {
+        const audio = document.getElementById('intro-audio');
+        const visualizer = document.getElementById('audio-vis');
+        
+        if(audio && visualizer) {
+            audio.addEventListener('play', () => {
+                visualizer.classList.add('playing');
+            });
+            audio.addEventListener('pause', () => {
+                visualizer.classList.remove('playing');
+            });
+            audio.addEventListener('ended', () => {
+                visualizer.classList.remove('playing');
+            });
+        }
+    });
+
+    function toonStap(stapNummer) {
+        document.querySelectorAll('.step').forEach(el => {
+            el.classList.remove('active');
+            setTimeout(() => {
+                if(!el.classList.contains('active')) el.style.display = 'none';
+            }, 500);
+        });
+
+        setTimeout(() => {
+            let stapId = 'stap-' + stapNummer;
+            if(stapNummer === 'intro') stapId = 'stap-intro'; 
+            if(stapNummer === 'succes') stapId = 'stap-succes';
+            
+            const actieveStap = document.getElementById(stapId);
+            if(actieveStap) {
+                actieveStap.style.display = 'block';
+                setTimeout(() => actieveStap.classList.add('active'), 20);
+            }
+            
+            if(stapNummer === 'succes') {
+                document.querySelector('.status-bar').innerHTML = 'Systeem Ontgrendeld <div class="status-dot" style="background-color: #F8FFFE; box-shadow: 0 0 10px #F8FFFE;"></div>';
+            }
+        }, 500);
+    }
+
+    function gaNaarStap(stapNummer) {
+        toonStap(stapNummer);
+    }
+
+    let chatStaat = 0;
+
+    function stuurChatBericht() {
+        const inputVeld = document.getElementById('chat-input');
+        const bericht = inputVeld.value.toLowerCase().trim();
+        const chatVenster = document.getElementById('chat-venster');
+
+        if (bericht === '') return;
+
+        chatVenster.innerHTML += `<div style="color: var(--pale-jade); align-self: flex-end; background: rgba(52, 91, 99, 0.3); padding: 5px 10px; border-radius: 4px; margin-left: auto; max-width: 80%;">[U]: ${inputVeld.value}</div>`;
+        inputVeld.value = '';
+        chatVenster.scrollTo({ top: chatVenster.scrollHeight, behavior: 'smooth' });
+
+        const typId = 'typ-indicator-' + Date.now();
+        chatVenster.innerHTML += `<div id="${typId}" style="color: rgba(107, 181, 196, 0.7); font-style: italic;">[Systeem_AI] analyseert data...</div>`;
+        chatVenster.scrollTo({ top: chatVenster.scrollHeight, behavior: 'smooth' });
+
+        setTimeout(() => {
+            document.getElementById(typId).remove();
+
+            if (chatStaat === 0) {
+                if (bericht === 'wijs' || bericht.includes('wijs')) {
+                    chatVenster.innerHTML += `<div style="color: var(--rich-teal);">[Systeem_AI]: Fragment 1 vastgelegd. Vraag 2/5: Bekijk het gekregen blokje; Wat is de eerste kernwaarde van het koersplan? Neem hier de eerste 3 letters van.</div>`;
+                    chatStaat = 1;
+                } else {
+                    chatVenster.innerHTML += `<div style="color: #ff5252;">[Systeem_AI]: Incorrect. Zoek een synoniem voor verstandig of slim.</div>`;
+                }
+            } 
+            else if (chatStaat === 1) {
+                if (bericht === 'ver' || bericht.includes('ver')) {
+                    chatVenster.innerHTML += `<div style="color: var(--rich-teal);">[Systeem_AI]: Fragment 2 vastgelegd. Vraag 3/5: Wat is het eerste gedeelte van de naam van de stichting?</div>`;
+                    chatStaat = 2;
+                } else {
+                    chatVenster.innerHTML += `<div style="color: #ff5252;">[Systeem_AI]: Incorrect. Bekijk het blokje goed en voer exact 3 letters in.</div>`;
+                }
+            }
+            else if (chatStaat === 2) {
+                if (bericht === 'wonder' || bericht.includes('wonder')) {
+                    chatVenster.innerHTML += `<div style="color: var(--rich-teal);">[Systeem_AI]: Fragment 3 vastgelegd. Vraag 4/5: Welke letter gebruiken we in de informatica als afkorting voor 'Tera' (zoals in Terabyte)?</div>`;
+                    chatStaat = 3;
+                } else {
+                    chatVenster.innerHTML += `<div style="color: #ff5252;">[Systeem_AI]: Incorrect. We zoeken naar het eerste deel van de stichtingsnaam.</div>`;
+                }
+            }
+            else if (chatStaat === 3) {
+                if (bericht === 't' || bericht === 'tera') {
+                    chatVenster.innerHTML += `<div style="color: var(--rich-teal);">[Systeem_AI]: Fragment 4 vastgelegd. Vraag 5/5: Welk woord vormt de kern van de naam van dit lab en is tevens een synoniem voor 'mirakel'?</div>`;
+                    chatStaat = 4;
+                } else {
+                    chatVenster.innerHTML += `<div style="color: #ff5252;">[Systeem_AI]: Incorrect. Denk aan Kilobyte (K), Megabyte (M), Gigabyte (G)... en Terabyte?</div>`;
+                }
+            }
+            else if (chatStaat === 4) {
+                if (bericht === 'wonder' || bericht.includes('wonder')) {
+                    chatVenster.innerHTML += `<div style="color: var(--rich-teal);">[Systeem_AI]: Alle fragmenten verzameld. Finale Opdracht: Hussel de 5 verzamelde woorden en letters door elkaar en zet ze in de juiste volgorde aaneen (zonder spaties). Wat is de ultieme mastercode?</div>`;
+                    chatStaat = 5;
+                } else {
+                    chatVenster.innerHTML += `<div style="color: #ff5252;">[Systeem_AI]: Incorrect. Het is een ander woord voor mirakel.</div>`;
+                }
+            }
+            else if (chatStaat === 5) {
+                if (bericht === 'wonderwijsverwondert') {
+                    chatVenster.innerHTML += `<div style="color: var(--pale-teal); font-weight: bold; text-shadow: 0 0 10px var(--pale-teal);">[Systeem_AI]: MASTERCODE GEACCEPTEERD. Welkom bij Stichting Wonderwijs. Toegang wordt verleend.</div>`;
+                    chatStaat = 6;
+                    
+                    document.getElementById('chat-input').style.display = 'none';
+                    document.getElementById('chat-btn').style.display = 'none';
+                    document.getElementById('btn-naar-stap-2').style.display = 'block';
+                } else {
+                    chatVenster.innerHTML += `<div style="color: #ff5252;">[Systeem_AI]: Mastercode incorrect. Tip: Combineer de fragmenten [wijs, ver, wonder, t, wonder] tot een kloppende zin of naam.</div>`;
+                }
+            }
+            
+            chatVenster.scrollTo({ top: chatVenster.scrollHeight, behavior: 'smooth' });
+        }, 1200); 
+    }
+
+    function controleerStap2() {
+        const antwoord = document.getElementById('input-2').value.toUpperCase().trim();
+        if (antwoord === 'OZO-26') { 
+            document.getElementById('fout-2').style.display = 'none';
+            gaNaarStap(3);
+        } else {
+            document.getElementById('fout-2').style.display = 'block';
+        }
+    }
+
+    function controleerStap3() {
+        const antwoord = document.getElementById('input-3').value.toLowerCase().trim();
+        
+        const geldigeCodes = [
+            'd1', 'i2', 'g3', 'i4', 't5', 'a6', 'l7', 'e8', 'g9', 'e10', 
+            'l11', 'e12', 't13', 't14', 'e15', 'r16', 'd17', 'h18', 'e19', 'i20', 'd21'
+        ];
+        
+        if (geldigeCodes.includes(antwoord)) {
+            document.getElementById('fout-3').style.display = 'none';
+            gaNaarStap('succes');
+        } else {
+            document.getElementById('fout-3').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
