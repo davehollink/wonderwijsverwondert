@@ -54,7 +54,7 @@
             100% { opacity: 1; }
         }
 
-        /* Nieuwe layout: Volledige breedte en uitgelijnd naar rechts */
+        /* Layout: Volledige breedte en uitgelijnd naar rechts */
         .hoofd-container {
             width: 100vw;
             min-height: 100vh;
@@ -93,12 +93,12 @@
             99% { opacity: 1; filter: drop-shadow(0 0 30px rgba(212, 236, 221, 0.8)); }
         }
 
-        /* Cyberpunk/Tech Paneel - Neemt de rechterkant in */
+        /* Cyberpunk/Tech Paneel */
         .tech-paneel {
             width: 55%;
             max-width: 900px;
             background: rgba(21, 45, 53, 0.6);
-            padding: 50px 60px;
+            padding: 60px 60px 50px 60px;
             border-radius: 8px;
             backdrop-filter: blur(12px);
             border: 1px solid var(--rich-teal);
@@ -161,29 +161,24 @@
             font-weight: 400;
         }
 
-        .input-groep {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
         /* Tech Input Velden */
         input[type="text"] {
-            width: 70%;
+            width: 100%;
             padding: 15px 20px;
             background-color: rgba(17, 32, 49, 0.8);
             border: 1px solid var(--rich-teal);
             border-left: 4px solid var(--pale-jade);
             color: var(--pale-teal);
-            font-size: 1.4em;
+            font-size: 1.2em;
             font-family: var(--font-tech);
             font-weight: 600;
             text-align: center;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             outline: none;
             transition: all 0.3s ease;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            box-sizing: border-box;
         }
 
         input[type="text"]:focus {
@@ -202,18 +197,18 @@
             background: transparent;
             color: var(--pale-jade);
             border: 2px solid var(--pale-jade);
-            padding: 16px 50px;
-            margin-top: 35px;
+            padding: 15px 30px;
             cursor: pointer;
             border-radius: 4px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             font-family: var(--font-tech);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
 
         .actie-knop:hover {
@@ -221,6 +216,20 @@
             color: var(--deep-azure-dark);
             box-shadow: 0 0 25px rgba(212, 236, 221, 0.6);
             transform: translateY(-2px);
+        }
+
+        /* Styling speciaal voor de inline terug-knop */
+        .terug-knop {
+            background: rgba(17, 32, 49, 0.6);
+            border: 1px solid rgba(107, 181, 196, 0.5);
+            color: rgba(212, 236, 221, 0.8);
+        }
+
+        .terug-knop:hover {
+            background: rgba(52, 91, 99, 0.4);
+            border-color: var(--pale-jade);
+            color: var(--pale-teal);
+            box-shadow: 0 0 15px rgba(107, 181, 196, 0.4);
         }
 
         .foutmelding {
@@ -267,6 +276,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            z-index: 10;
         }
         
         .status-dot {
@@ -369,6 +379,7 @@
             }
             .tech-paneel {
                 width: 100%;
+                padding: 60px 30px 40px 30px; 
             }
         }
     </style>
@@ -406,7 +417,7 @@
                 </audio>
             </div>
 
-            <div class="input-groep">
+            <div style="display: flex; justify-content: center; margin-top: 30px;">
                 <button class="actie-knop" onclick="gaNaarStap(0)">Ga Verder</button>
             </div>
         </div>
@@ -414,7 +425,9 @@
         <div id="stap-0" class="step">
             <h2>Systeem Initialisatie</h2>
             <p>Welkom in de mainframe van het Verwonderlab. De 'Toekomstvisie 2030' is beveiligd door drievoudige encryptie. Om toegang te verkrijgen, vereist het systeem data-input via AI, robotica en ruimtelijk inzicht. Protocol starten?</p>
-            <div class="input-groep">
+            
+            <div style="display: flex; gap: 15px; justify-content: center; width: 100%; margin-top: 30px;">
+                <button class="actie-knop terug-knop" onclick="gaNaarStap('intro')">◄ Terug</button>
                 <button class="actie-knop" onclick="gaNaarStap(1)">Start Missie</button>
             </div>
         </div>
@@ -427,36 +440,51 @@
                 <div style="color: var(--rich-teal);">[Systeem_AI]: Systeemvergrendeling actief. We starten het verificatie-protocol. <br><br>Vraag 1/5: Wat is een ander woord voor verstandig of slim?</div>
             </div>
 
-            <div class="input-groep" style="flex-direction: row; gap: 10px; width: 100%; justify-content: center;">
-                <input type="text" id="chat-input" placeholder="TYP ANTWOORD..." autocomplete="off" onkeypress="if(event.key === 'Enter') stuurChatBericht()" style="width: 70%; margin-top: 0; text-transform: none; text-align: left; font-size: 1.1em;">
-                <button id="chat-btn" class="actie-knop" onclick="stuurChatBericht()" style="margin-top: 0; padding: 15px 25px;">Zend</button>
+            <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; justify-content: center; align-items: stretch;">
+                <button class="actie-knop terug-knop" onclick="gaNaarStap(0)" style="margin-top: 0;">◄ Terug</button>
+                <div style="flex-grow: 1;">
+                    <input type="text" id="chat-input" placeholder="TYP ANTWOORD..." autocomplete="off" onkeypress="if(event.key === 'Enter') stuurChatBericht()" style="margin-top: 0; text-transform: none; text-align: left; height: 100%;">
+                </div>
+                <button id="chat-btn" class="actie-knop" onclick="stuurChatBericht()" style="margin-top: 0;">Zend</button>
             </div>
             
-            <button id="btn-naar-stap-2" class="actie-knop" onclick="gaNaarStap(2)" style="display: none; width: 100%; margin-top: 20px;">INITIEER FASE 2</button>
+            <div style="display: flex; justify-content: center;">
+                <button id="btn-naar-stap-2" class="actie-knop" onclick="gaNaarStap(2)" style="display: none; width: 100%; margin-top: 20px;">INITIEER FASE 2</button>
+            </div>
         </div>
 
         <div id="stap-2" class="step">
             <h2>Fase 2: Navigatie Logica</h2>
-            <p>Activeer de Ozobot op de fysieke plattegrond. Vul de ontbrekende kleurcodes in om de route naar de 'Innovatie-hub' te voltooien. Laat de succesvolle route zien aan de Systeembeheerders. Bij een correcte uitvoering ontvangen jullie een unieke autorisatiecode.</p>
-            <div class="input-groep">
-                <input type="text" id="input-2" placeholder="VOER AUTORISATIECODE IN" autocomplete="off">
-                <div id="fout-2" class="foutmelding">Error: Autorisatiecode onjuist. Route niet geverifieerd.</div>
-                <button class="actie-knop" onclick="controleerStap2()">Verifieer</button>
+            <p>Activeer de Ozobot op de fysieke plattegrond. Vul de ontbrekende kleurcodes in om de route naar de 'Innovatie-hub' te voltooien. Laat de succesvolle route zien aan de Systeembeheerders. Bij een correcte uitvoering ontvangen jullie een geheime map. Gebruik de 'EasiScopes' om de map te onderzoeken en vind de verborgen code. Voer deze in om verder te gaan.</p>
+            
+            <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; justify-content: center; align-items: stretch; margin-top: 20px;">
+                <button class="actie-knop terug-knop" onclick="gaNaarStap(1)" style="margin-top: 0;">◄ Terug</button>
+                <div style="flex-grow: 1;">
+                    <input type="text" id="input-2" placeholder="VOER VERBORGEN CODE IN" autocomplete="off" style="margin-top: 0; height: 100%;">
+                </div>
+                <button class="actie-knop" onclick="controleerStap2()" style="margin-top: 0;">Verifieer</button>
             </div>
+            <div id="fout-2" class="foutmelding">Error: Code onjuist. Onderzoek de map grondiger met de EasiScope.</div>
         </div>
 
         <div id="stap-3" class="step">
             <h2>Fase 3: Ruimtelijk Inzicht (3D)</h2>
-            <p>Bestudeer het fysieke blokje op tafel. Onderop zien jullie een letter. Om dit op te lossen, moeten jullie de digitale blauwdruk van dit object analyseren in de 3D-omgeving.<br>
+            <p>Bestudeer het fysieke blokje op tafel. Onderop zien jullie een letter. Om dit op te lossen, moeten jullie de digitale blauwdruk van dit object analyseren in de 3D-omgeving.<br><br>
             
-            <a href="https://www.tinkercad.com/joinclass/M5B6R8MNY" target="_blank" class="tech-link">OPEN 3D-BLAUWDRUK</a><br>
+            <a href="https://www.tinkercad.com/joinclass/M5B6R8MNY" target="_blank" class="tech-link">OPEN 3D-BLAUWDRUK</a><br><br>
+            
+            Wanneer de omgeving is geopend, log je in met je inlogcode: <strong>je voornaam (in kleine letters)</strong>. Daarin staat een opdracht klaar genaamd <strong>'Codeblok'</strong>. Hierin is het digitale 3D-ontwerp te vinden.<br><br>
             
             Zoek het verborgen getal in het digitale model. Dit getal maakt samen met de letter onder op het blokje de juiste combinatie (bijvoorbeeld A1, B2 etc.).</p>
-            <div class="input-groep">
-                <input type="text" id="input-3" placeholder="VOER CODE IN (BIJV. A1)" autocomplete="off">
-                <div id="fout-3" class="foutmelding">Systeemfout: Code onjuist of combinatie niet herkend.</div>
-                <button class="actie-knop" onclick="controleerStap3()">Ontgrendel</button>
+            
+            <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; justify-content: center; align-items: stretch; margin-top: 20px;">
+                <button class="actie-knop terug-knop" onclick="gaNaarStap(2)" style="margin-top: 0;">◄ Terug</button>
+                <div style="flex-grow: 1;">
+                    <input type="text" id="input-3" placeholder="VOER CODE IN (BIJV. A1)" autocomplete="off" style="margin-top: 0; height: 100%;">
+                </div>
+                <button class="actie-knop" onclick="controleerStap3()" style="margin-top: 0;">Ontgrendel</button>
             </div>
+            <div id="fout-3" class="foutmelding">Systeemfout: Code onjuist of combinatie niet herkend.</div>
         </div>
 
         <div id="stap-succes" class="step">
@@ -469,7 +497,6 @@
 </div>
 
 <script>
-    // JS Logica voor de Audio Visualizer animatie
     document.addEventListener("DOMContentLoaded", function() {
         const audio = document.getElementById('intro-audio');
         const visualizer = document.getElementById('audio-vis');
@@ -581,8 +608,7 @@
                     chatVenster.innerHTML += `<div style="color: var(--pale-teal); font-weight: bold; text-shadow: 0 0 10px var(--pale-teal);">[Systeem_AI]: MASTERCODE GEACCEPTEERD. Welkom bij Stichting Wonderwijs. Toegang wordt verleend.</div>`;
                     chatStaat = 6;
                     
-                    document.getElementById('chat-input').style.display = 'none';
-                    document.getElementById('chat-btn').style.display = 'none';
+                    document.getElementById('chat-input').closest('div').style.display = 'none';
                     document.getElementById('btn-naar-stap-2').style.display = 'block';
                 } else {
                     chatVenster.innerHTML += `<div style="color: #ff5252;">[Systeem_AI]: Mastercode incorrect. Tip: Combineer de fragmenten [wijs, ver, wonder, t, wonder] tot een kloppende zin of naam.</div>`;
@@ -595,6 +621,7 @@
 
     function controleerStap2() {
         const antwoord = document.getElementById('input-2').value.toUpperCase().trim();
+        // De verborgen code op de map, gevonden met de EasiScope. Pas dit aan als je een andere code gebruikt!
         if (antwoord === 'OZO-26') { 
             document.getElementById('fout-2').style.display = 'none';
             gaNaarStap(3);
